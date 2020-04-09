@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xn.dao.user.BalanceDao">
+
+    <select id="getUserBlance" resultType="com.xn.domain.user.Balance">
+     select * from t_balance where userId="${userId}"
+    </select>
+    <insert id="insertUserBalance">
+        insert into t_balance (userId,updateDate,balan,totalRevenue) values ("${userId}",now(),0,0)
+    </insert>
+    <insert id="insertNewBalance">
+        insert into t_balance (userId,updateDate,balan,totalRevenue) values ("${userId}",now(),0,0)
+    </insert>
+    <update id="updateBlance" parameterType="map">
+    update  t_balance
+        set updateDate = #{updateDate},
+        balan =${balan},
+        totalRevenue =${totalRevenue}
+        where userId=#{userId}
+    </update>
+
+</mapper>

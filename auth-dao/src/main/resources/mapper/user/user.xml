@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xn.dao.user.UserDao">
+
+    <resultMap id="user" type="com.xn.domain.user.User">
+        <id property="id" column="id"/>
+        <result property="userName" column="userName"/>
+        <result property="pwd" column="pwd"/>
+        <result property="nickName" column="nickName"/>
+        <result property="phoneNum" column="phoneNum"/>
+        <result property="imgUrl" column="imgUrl"/>
+        <result property="highLevel" column="highLevel"/>
+        <result property="openId" column="openId"/>
+        <result property="roleType" column="roleType"/>
+        <result property="remainNum" column="remainNum"/>
+    </resultMap>
+
+
+    <!--插入新用户信息-->
+    <insert id="insertNewUser" parameterType="java.util.Map">
+    INSERT INTO t_user(id,userName,nickName,imgUrl,highLevel,openId,roleType)
+    VALUES ( #{openId}, #{userName},#{imgUrl},1,#{highLevel},#{openId},1);
+    </insert>
+
+    <insert id="insertUser" parameterType="com.xn.domain.user.User">
+    INSERT INTO t_user(id,userName,nickName,imgUrl,highLevel,openId,roleType,remainNum)
+    VALUES ( "${openId}","${nickName}","${nickName}","${imgUrl}","${highLevel}","${openId}",1,"${remainNum}");
+    </insert>
+    <!--更新用户信息-->
+    <update id="updateUserInf" parameterType="com.xn.domain.user.User">
+    update t_user
+        <trim prefix="set" suffixOverrides=",">
+        <if test=" userName != null and userName!= ''">
+            userName="${userName}",
+        </if>
+
+        <if test=" pwd != null and pwd!= ''">
+        pwd="${pwd}",
+        </if>
+
+        <if test=" nickName != null and nickName!= ''">
+        nickName="${nickName}",
+        </if>
+
+        <if test=" imgUrl != null and imgUrl!= ''">
+        imgUrl="${imgUrl}",
+        </if>
+
+        <if test=" roleType != null and roleType!= ''">
+        roleType="${roleType}",
+        </if>
+
+        <if test=" highLevel != null and highLevel!= ''">
+        highLevel="${highLevel}",
+        </if>
+
+        <if test=" remainNum != null and remainNum!= ''">
+        remainNum="${remainNum}",
+        </if>
+
+        <if test=" openId != null and openId!= ''">
+        openId="${openId}"
+        </if>
+        </trim>
+    where
+    id="${id}"
+    </update>
+    <!--更新用户信息-->
+    <update id="updateUser">
+        update t_user
+        <trim prefix="set" suffixOverrides=",">
+
+        <if test=" userName != null and userName!= ''">
+            userName="${userName}",
+        </if>
+        <if test=" userName != null and userName!= ''">
+            nickName="${userName}",
+        </if>
+        <if test=" imgUrl != null and imgUrl!= ''">
+            imgUrl="${imgUrl}",
+        </if>
+        <if test=" roleType != null and roleType!= ''">
+            roleType="${roleType}",
+        </if>
+
+        <if test=" highLevel != null and highLevel!= ''">
+            highLevel="${highLevel}",
+        </if>
+        </trim>
+        where openId="${openId}"
+    </update>
+    <!--查询用户信息-->
+    <select id="selectUserInf" resultMap="user">
+    select * from t_user where openId = "${userId}"
+    </select>
+    <!--查询下下级用户总数-->
+    <select id="selectLowlowUserListCount" resultType="int">
+        SELECT
+            count(id)
+        FROM
+            t_user
+        WHERE
+            highLevel IN ( SELECT openId FROM t_user WHERE highLevel = "#{userId}" )
+    </select>
+    <!--查询下级用户列表-->
+    <select id="selectLowUserList" resultType="java.util.Map">
+    SELECT
+        id as userId ,userName as userName, imgUrl AS imgUrl, roleType as roleType
+        FROM
+            t_user
+        WHERE
+        highLevel ="#{userId}"
+    </select>
+</mapper>

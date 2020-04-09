@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xn.dao.user.ThirdUserDao">
+
+    <!--只查询出当前用户使用的第三方账户-->
+    <select id="getThirdUserEntityByUserId" resultType="com.xn.domain.user.ThirdUserEntity">
+    SELECT
+        t.id,
+        t.plateform_type AS plateformType,
+        t.server_ip AS serverIp,
+        t.server_port AS serverPort,
+        t.third_user_name AS thirdUserName,
+        t.company_id as companyId,
+        t.third_password AS thirdPassword,
+        t.third_token AS thirdToken,
+        t.auth_expire AS authExpire,
+        t.auth_time AS authTime,
+        t.user_id AS userId,
+        t.third_user_id AS thirdUserId,
+        t.is_used AS isUsed
+    FROM
+         unit_auth.t_third_user  AS t
+        JOIN t_user AS u ON u.id = t.user_id and u.del_flag=0
+    WHERE
+        t.user_id = ${userId}
+        and t.is_used = 0
+    </select>
+    <!--只查询出当前用户使用的第三方账户-->
+    <select id="getThirdUserEntityByThirdUserId" resultType="com.xn.domain.user.ThirdUserEntity">
+    SELECT
+        t.id,
+        t.plateform_type AS plateformType,
+        t.server_ip AS serverIp,
+        t.server_port AS serverPort,
+        t.third_user_name AS thirdUserName,
+        t.third_password AS thirdPassword,
+        t.third_token AS thirdToken,
+        t.company_id as companyId,
+        t.auth_expire AS authExpire,
+        t.auth_time AS authTime,
+        t.user_id AS userId,
+        t.third_user_id AS thirdUserId,
+        t.is_used AS isUsed
+    FROM
+         unit_auth.t_third_user  AS t
+        JOIN t_user AS u ON u.id = t.user_id and u.del_flag=0
+    WHERE
+        t.third_user_id = ${tUserId}
+        and t.is_used = 0
+    </select>
+
+    <select id="getAllBindThirdAccount" resultType="map">
+        SELECT
+            t.id,
+            t.plateform_type AS plateformType,
+            t.server_ip AS serverIp,
+            t.server_port AS serverPort,
+            t.third_user_name AS thirdUserName,
+            t.third_token AS thirdToken,
+            t.auth_expire AS authExpire,
+            t.company_id as companyId,
+            t.auth_time AS authTime,
+            t.is_used AS useState,
+            t.third_user_id AS thirdUserId
+        FROM
+             unit_auth.t_third_user  AS t
+            JOIN t_user AS u ON u.id = t.user_id and u.del_flag=0
+        WHERE
+            t.user_id = ${userId}
+    </select>
+
+
+    <select id="getThirdUserEntityByThirdAccount" resultType="com.xn.domain.user.ThirdUserEntity">
+    SELECT
+        t.id,
+        t.plateform_type AS plateformType,
+        t.server_ip AS serverIp,
+        t.server_port AS serverPort,
+        t.third_user_name AS thirdUserName,
+        t.third_password AS thirdPassword,
+        t.company_id as companyId,
+        t.third_token AS thirdToken,
+        t.auth_expire AS authExpire,
+        t.auth_time AS authTime,
+        t.user_id AS userId,
+        t.third_user_id AS thirdUserId,
+        t.is_used AS isUsed
+    FROM
+         unit_auth.t_third_user  AS t
+        JOIN t_user AS u ON u.id = t.user_id and u.del_flag=0
+    WHERE
+        t.third_user_name = #{account}
+        and user_id=${userId}
+        and plateform_type=${plateformType}
+    </select>
+
+    <!--更新token获取时间，到期时间-->
+    <update id="updateAuthTokenInfo">
+        update  unit_auth.t_third_user
+        set third_token = #{token},
+        auth_expire =${expireDate},
+        auth_time =${authDate}
+        where user_id=#{userId}
+        and third_user_id=#{thirdUserId}
+    </update>
+    <!--更新token获取时间，到期时间-->
+    <update id="updateAuthToken" parameterType="map">
+        update  unit_auth.t_third_user
+        set third_token = #{token},
+        auth_expire =#{expireDate},
+        auth_time =#{authDate}
+        where user_id=#{userId}
+        and plateform_type=#{plateformType}
+        and third_user_name=#{tUname}
+    </update>
+
+    <!--更新第三方账户使用切换状态  0 使用  1待使用-->
+    <update id="updateThirdUseState">
+        update unit_auth.t_third_user
+        set is_used =${useState}
+        where user_id=#{userId}
+        <if test=" tUser != null and tUser!= ''">
+            and third_user_name=#{tUser}
+        </if>
+        <if test=" plateformType != null and plateformType!= ''">
+            and plateform_type=${plateformType}
+        </if>
+
+    </update>
+
+    <insert id="bindThirdUser" parameterType="map">
+    INSERT INTO  unit_auth.t_third_user
+        (user_id,third_user_id,plateform_type,company_id,server_ip,server_port,third_user_name,third_password,third_token,auth_expire,auth_time,is_used)
+    VALUES
+		(${userId},#{tUserId}, ${plateformType},#{tCompanyId},#{ip},#{port}, #{account},#{password}, #{token},#{expireDate},#{authDate},${isUsed})
+    </insert>
+
+</mapper>

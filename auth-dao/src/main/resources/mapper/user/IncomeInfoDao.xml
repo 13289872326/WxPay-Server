@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xn.dao.user.IncomeInfoDao">
+
+    <insert id="addNewIncomeInfo" parameterType="java.util.Map">
+        insert into t_income_info (bfId,profitTime,profit,ctbId) value ("#{bfId}",now(),"#{profit}","#{ctbId}")
+    </insert>
+    <select id="getUserIncoList" resultType="com.xn.domain.user.IncomeInfo">
+        select * from t_income_info where bfId="#{userId}"
+    </select>
+    <select id="incoCount" resultType="long">
+     select sum(profit) as countIncome , bfId as userId from t_income_info where bfId = "#{userId}"
+    </select>
+
+    <select id="getLowUserIncoList" resultType="long">
+    select
+    sum(profit) as countIncome , bfId as userId
+    from t_income_info
+     where
+     bfId in
+     (select openId from t_user where highLevel ="#{userId}")
+     GROUP BY userId
+    </select>
+
+</mapper>

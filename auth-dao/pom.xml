@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>auth-parent</artifactId>
+        <groupId>com.xn</groupId>
+        <version>1.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <version>1.0.0</version>
+    <artifactId>auth-dao</artifactId>
+    <packaging>jar</packaging>
+    <description>auth-dao</description>
+
+    <dependencies>
+        <!--<dependency>-->
+            <!--<groupId>com.xn</groupId>-->
+            <!--<artifactId>xn-common</artifactId>-->
+            <!--<version>1.0.2-SNAPSHOT</version>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>com.xn</groupId>
+            <artifactId>auth-domain</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+    </dependencies>
+</project>
